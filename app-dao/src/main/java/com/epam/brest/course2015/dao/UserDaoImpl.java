@@ -46,4 +46,17 @@ public class UserDaoImpl implements UserDao {
     public void insertUser(User user) {
         jdbcTemplate.update("insert into user (userId, login, password) values (?, ?, ?)", user.getUserId(), user.getLogin(), user.getPassword());
     }
+
+    @Override
+    public void deleteUser(Integer id) {
+        jdbcTemplate.update("delete from user where userId=?", id);
+    }
+
+    @Override
+    public void changeUserLogin (Integer id, String login) {
+        jdbcTemplate.update("update user set login = ? where userId = ?", login, id);
+    }
+
+    @Override
+    public void changeUserPassword (Integer id, String password) {}
 }

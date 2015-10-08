@@ -44,10 +44,35 @@ import static org.junit.Assert.*;
             userDao.insertUser(user);
 
             List<User> usersList = userDao.getAllUsers();
-            assertTrue(usersList.size() == 3);
+            assertTrue(usersList.size() == 4);
 
             User userTest = userDao.getUserById(3);
             assertTrue(userTest.getUserId() == 3 && userTest.getLogin().equals("user3") && userTest.getPassword().equals("user3Password"));
+        }
+
+        @Test
+        public void testDeleteUser() throws Exception {
+            Integer listSizeBefore = userDao.getAllUsers().size();
+            assertTrue(listSizeBefore == 4);
+            userDao.deleteUser(2);
+            Integer listSizeAfter = userDao.getAllUsers().size();
+            assertTrue(listSizeAfter == 3);
+        }
+
+        @Test
+        public void testChangeUserLogin () throws Exception {
+            User user = new User();
+            user.setUserId(4);
+            user.setLogin("user4");
+            user.setPassword("user4Password");
+
+            userDao.insertUser(user);
+
+            User userBefore = userDao.getUserById(4);
+            assertTrue(userBefore.getLogin().equals("user4"));
+            userDao.changeUserLogin(4, "userNew");
+            User userAfter = userDao.getUserById(4);
+            assertTrue(userAfter.getLogin().equals("userNew"));
         }
 
 
