@@ -9,6 +9,7 @@
         <property name="locations">
             <list>
                 <value>classpath:database.properties</value>
+                <value>classpath:app.properties</value>
             </list>
         </property>
     </bean>

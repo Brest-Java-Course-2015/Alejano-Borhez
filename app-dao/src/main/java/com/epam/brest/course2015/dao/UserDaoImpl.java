@@ -1,6 +1,9 @@
 package com.epam.brest.course2015.dao;
 
 import com.epam.brest.course2015.domain.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -13,6 +16,14 @@ import java.util.List;
  * Created by alexander on 7.10.15.
  */
 public class UserDaoImpl implements UserDao {
+
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    @Value("${user.select}")
+    private String userSelect;
+    @Value("${user.selectById}")
+    private String userSelectById;
 
     private static final class UserMapper implements RowMapper<User> {
         @Override
@@ -34,12 +45,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        return jdbcTemplate.query("select * from user", new UserMapper());
+        return jdbcTemplate.query(userSelect, new UserMapper());
     }
 
     @Override
     public User getUserById(Integer id) {
-        return jdbcTemplate.queryForObject("select * from user where userId=?", new  Object[]{id}, new UserMapper());
+        LOGGER.info("id: {}", id);
+        return jdbcTemplate.queryForObject(userSelectById, new  Object[]{id}, new UserMapper());
     }
 
     @Override
@@ -59,4 +71,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void changeUserPassword (Integer id, String password) {}
+
+
 }

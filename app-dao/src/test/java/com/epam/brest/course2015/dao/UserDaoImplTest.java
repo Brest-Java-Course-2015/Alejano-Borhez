@@ -1,9 +1,11 @@
 package com.epam.brest.course2015.dao;
 
 import com.epam.brest.course2015.domain.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -16,11 +18,14 @@ import static org.junit.Assert.*;
  */
     @RunWith(SpringJUnit4ClassRunner.class)
     @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
+    //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 
     public class UserDaoImplTest {
 
         @Autowired
         private UserDao userDao;
+
+
 
         @Test
         public void testGetAllUsers() throws Exception {
@@ -28,7 +33,8 @@ import static org.junit.Assert.*;
             assertTrue(users.size() == 2);
         }
 
-       @Test
+
+        @Test
         public void testGetUserById() throws Exception {
             User user = userDao.getUserById(1);
             assertTrue(user.getUserId() == 1 && user.getLogin().equals("user1") && user.getPassword().equals("user1Password"));
@@ -53,10 +59,9 @@ import static org.junit.Assert.*;
         @Test
         public void testDeleteUser() throws Exception {
             Integer listSizeBefore = userDao.getAllUsers().size();
-            assertTrue(listSizeBefore == 4);
             userDao.deleteUser(2);
             Integer listSizeAfter = userDao.getAllUsers().size();
-            assertTrue(listSizeAfter == 3);
+            assertTrue((listSizeBefore - listSizeAfter) == 1);
         }
 
         @Test
