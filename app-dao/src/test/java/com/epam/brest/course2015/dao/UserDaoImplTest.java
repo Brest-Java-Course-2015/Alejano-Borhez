@@ -1,11 +1,9 @@
 package com.epam.brest.course2015.dao;
 
 import com.epam.brest.course2015.domain.User;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -18,67 +16,84 @@ import static org.junit.Assert.*;
  */
     @RunWith(SpringJUnit4ClassRunner.class)
     @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
-    //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 
     public class UserDaoImplTest {
 
         @Autowired
         private UserDao userDao;
 
-
+        @Test
+        public void testIsThereAUser() throws Exception {
+            assertFalse(userDao.isThereAUser(5));
+            assertTrue(userDao.isThereAUser(1));
+        }
 
         @Test
         public void testGetAllUsers() throws Exception {
             List<User> users = userDao.getAllUsers();
-            assertTrue(users.size() == 2);
+            assertTrue(users.size() > 0);
         }
-
 
         @Test
         public void testGetUserById() throws Exception {
-            User user = userDao.getUserById(1);
-            assertTrue(user.getUserId() == 1 && user.getLogin().equals("user1") && user.getPassword().equals("user1Password"));
+            User user1 = userDao.getUserById(1);
+            assertTrue(user1.getUserId() == 1 && user1.getLogin().equals("user1") && user1.getPassword().equals("user1Password"));
         }
 
         @Test
         public void testInsertUser() throws Exception {
+            Integer sizeBefore = userDao.getAllUsers().size();
+            Integer testId = 3;
             User user = new User();
-            user.setUserId(3);
+            user.setUserId(testId);
             user.setLogin("user3");
             user.setPassword("user3Password");
 
             userDao.insertUser(user);
 
-            List<User> usersList = userDao.getAllUsers();
-            assertTrue(usersList.size() == 4);
+            Integer sizeAfter = userDao.getAllUsers().size();
 
-            User userTest = userDao.getUserById(3);
-            assertTrue(userTest.getUserId() == 3 && userTest.getLogin().equals("user3") && userTest.getPassword().equals("user3Password"));
-        }
+            assertTrue( (sizeAfter - sizeBefore) == 1);
 
-        @Test
-        public void testDeleteUser() throws Exception {
-            Integer listSizeBefore = userDao.getAllUsers().size();
-            userDao.deleteUser(2);
-            Integer listSizeAfter = userDao.getAllUsers().size();
-            assertTrue((listSizeBefore - listSizeAfter) == 1);
-        }
+            userDao.deleteUser(testId);
+            sizeAfter = userDao.getAllUsers().size();
+            assertTrue((sizeBefore - sizeAfter) == 0);
+          }
 
         @Test
         public void testChangeUserLogin () throws Exception {
+            Integer testId = 4;
             User user = new User();
-            user.setUserId(4);
-            user.setLogin("user4");
-            user.setPassword("user4Password");
+            user.setUserId(testId);
+            user.setLogin("user" + testId);
+            user.setPassword("user" + testId + "Password");
 
             userDao.insertUser(user);
 
-            User userBefore = userDao.getUserById(4);
-            assertTrue(userBefore.getLogin().equals("user4"));
-            userDao.changeUserLogin(4, "userNew");
-            User userAfter = userDao.getUserById(4);
-            assertTrue(userAfter.getLogin().equals("userNew"));
+            String login = "newLogin";
+            userDao.changeUserLogin(testId, login);
+
+            assertTrue(userDao.getUserById(testId).getLogin().equals(login));
+
+            userDao.deleteUser(testId);
         }
 
+        @Test
+        public void testChangeUserPassword () throws Exception {
+            Integer testId = 4;
+            User user = new User();
+            user.setUserId(testId);
+            user.setLogin("user" + testId);
+            user.setPassword("user" + testId + "Password");
+
+            userDao.insertUser(user);
+
+            String password = "newLogin";
+            userDao.changeUserPassword(testId, password);
+
+            assertTrue(userDao.getUserById(testId).getPassword().equals(password));
+
+            userDao.deleteUser(testId);
+        }
 
     }

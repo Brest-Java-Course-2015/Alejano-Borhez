@@ -4,7 +4,7 @@
 
     <Appenders>
         <Console name="Console" target="SYSTEM.OUT">
-            <Patternlayout pattern="%d{HH:mm:ss.SSS}[%t] %-5level %logger{36} - %msg%n"/>
+            <Patternlayout pattern="%d{HH:mm:ss.SSS}[%t] %-5level %logger{6} - %msg%n"/>
         </Console>
 
         <File name="File" filename="logs/server.log">
