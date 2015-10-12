@@ -22,16 +22,18 @@ import static org.junit.Assert.*;
         @Autowired
         private UserDao userDao;
 
-        @Test
-        public void testIsThereAUser() throws Exception {
-            assertFalse(userDao.isThereAUser(5));
-            assertTrue(userDao.isThereAUser(1));
-        }
+
 
         @Test
         public void testGetAllUsers() throws Exception {
             List<User> users = userDao.getAllUsers();
             assertTrue(users.size() > 0);
+        }
+
+        @Test
+        public void testIsThereAUser() throws Exception {
+        assertFalse(userDao.isThereAUser(5));
+        assertTrue(userDao.isThereAUser(1));
         }
 
         @Test

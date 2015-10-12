@@ -5,20 +5,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.SplittableRandom;
 
 /**
  * Created by alexander on 7.10.15.
  */
 public class UserDaoImpl implements UserDao {
-
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -29,6 +30,9 @@ public class UserDaoImpl implements UserDao {
     @Value("${user.changeLogin}") private String userChangeLogin;
     @Value("${user.changePassword}") private String userChangePassword;
     @Value("${user.selectLogin}") private String userSelectLogin;
+    @Value("${user.id}") private String user_id;
+    @Value("${user.login}") private String user_login;
+    @Value("${user.password}") private String user_password;
 
     private static final class UserMapper implements RowMapper<User> {
         @Override
@@ -42,35 +46,28 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public UserDaoImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
+        namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
     public List<User> getAllUsers() {
         LOGGER.info("Starting method getAllUsers");
-        return jdbcTemplate.query(userSelect, new UserMapper());
+        return namedParameterJdbcTemplate.query(userSelect, new UserMapper());
 
     }
 
     @Override
     public boolean isThereAUser (Integer id) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource(user_id, id);
         try
         {
         LOGGER.info("Starting method isThereAUser");
-            String login = jdbcTemplate.queryForObject(userSelectLogin, new Object[]{id}, String.class);
-        if (login != null)
-        {
-            LOGGER.info("User with id: {} found! It's login is {}", id, login);
-            return true;
-        }
-        else
-        {
-            LOGGER.info("There is no user with id: {}", id);
-            return false;
-        }
+        String login = namedParameterJdbcTemplate.queryForObject(userSelectLogin, namedParameters, String.class);
+        LOGGER.info("User with id: {} found! It's login is {}", id, login);
+        return true;
         }
         catch (EmptyResultDataAccessException e)
         {
@@ -81,9 +78,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserById(Integer id) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource(user_id, id);
+
         LOGGER.info("Starting method getUserById with id: {}", id);
         if (isThereAUser(id))
-        return jdbcTemplate.queryForObject(userSelectById, new  Object[]{id}, new UserMapper());
+        return namedParameterJdbcTemplate.queryForObject(userSelectById, namedParameters, new UserMapper());
         else
         {
             return null;
@@ -93,10 +92,11 @@ public class UserDaoImpl implements UserDao {
     @Override
 
     public void insertUser(User user) {
+        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
         LOGGER.info("Starting method insertUser");
         if (!isThereAUser(user.getUserId()))
         {
-            jdbcTemplate.update(userInsert, user.getUserId(), user.getLogin(), user.getPassword());
+            namedParameterJdbcTemplate.update(userInsert, namedParameters);
             LOGGER.info("New user with id: {} successfully inserted!", user.getUserId());
         }
         else
@@ -107,9 +107,11 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void deleteUser(Integer id) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource(user_id, id);
+
         LOGGER.info("Starting method deleteUser with id: {}", id);
         if (isThereAUser(id)) {
-            jdbcTemplate.update(userDelete, id);
+            namedParameterJdbcTemplate.update(userDelete, namedParameters);
             LOGGER.info("User with id: {} was successfully deleted!", id);
         }
         else
@@ -120,9 +122,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void changeUserLogin (Integer id, String login) {
+        User user = new User();
+        user.setUserId(id);
+        user.setLogin(login);
+        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
+
         LOGGER.info("Starting method changeUserLogin with id: {} to new login: {}", id, login);
         if (isThereAUser(id)) {
-            jdbcTemplate.update(userChangeLogin, login, id);
+            namedParameterJdbcTemplate.update(userChangeLogin, namedParameters);
             LOGGER.info("Login of user with id: {} was successfully changed to {}", id, login);
         }
         else
@@ -133,9 +140,15 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void changeUserPassword (Integer id, String password) {
+        User user = new User();
+        user.setUserId(id);
+        user.setPassword(password);
+
+        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
+
         LOGGER.info("Starting method changeUserPassword with id: {} to new password: {}", id, password);
         if (isThereAUser(id)) {
-            jdbcTemplate.update(userChangePassword, password, id);
+            namedParameterJdbcTemplate.update(userChangePassword, namedParameters);
             LOGGER.info("Password of user with id: {} was successfully changed to {}", id, password);
         }
         else
