@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -34,17 +35,7 @@ public class UserDaoImpl implements UserDao {
     @Value("${user.login}") private String user_login;
     @Value("${user.password}") private String user_password;
 
-    private static final class UserMapper implements RowMapper<User> {
-        @Override
-        public User mapRow(ResultSet resultSet, int i) throws SQLException {
-            User user = new User();
-            user.setUserId(resultSet.getInt("userId"));
-            user.setLogin(resultSet.getString("login"));
-            user.setPassword(resultSet.getString("password"));
-
-            return user;
-        }
-    }
+    private RowMapper<User> userMapper = new BeanPropertyRowMapper<>(User.class);
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -55,7 +46,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         LOGGER.info("Starting method getAllUsers");
-        return namedParameterJdbcTemplate.query(userSelect, new UserMapper());
+        return namedParameterJdbcTemplate.query(userSelect, userMapper);
 
     }
 
@@ -82,7 +73,7 @@ public class UserDaoImpl implements UserDao {
 
         LOGGER.info("Starting method getUserById with id: {}", id);
         if (isThereAUser(id))
-        return namedParameterJdbcTemplate.queryForObject(userSelectById, namedParameters, new UserMapper());
+        return namedParameterJdbcTemplate.queryForObject(userSelectById, namedParameters, userMapper);
         else
         {
             return null;
