@@ -12,8 +12,11 @@ public interface UserDao {
     public boolean isThereAUser (Integer id);
     public List<User> getAllUsers();
     public User getUserById (Integer id);
-    public void insertUser (User user);
+    public User getUserByLogin (String login);
+    public Integer addUser(User user);
     public void deleteUser (Integer id);
     public void changeUserLogin (Integer id, String login);
     public void changeUserPassword (Integer id, String password);
+  //
+
 }

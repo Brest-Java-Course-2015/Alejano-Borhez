@@ -17,11 +17,10 @@ public class UserTest {
         user = new User();
     }
 
-
-
     @Test
     public void testGetLogin() throws Exception {
-    user.setLogin("LOGIN");
+        user.setLogin("LOGIN");
+        assertNotNull(user.getLogin());
         assertEquals("LOGIN", user.getLogin());
     }
 
@@ -44,9 +43,11 @@ public class UserTest {
     }
 
     @Test
-    public void testSetLogin() throws Exception {
-        user.setLogin("LOGIN");
-        assertNotNull(user.getLogin());
+    public void testGetUpdatedDate() throws Exception {
+        Date date = new Date();
+        user.setUpdatedDate(date);
+        assertEquals(date, user.getUpdatedDate());
+
     }
 
 }

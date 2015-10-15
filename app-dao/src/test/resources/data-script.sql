@@ -1,2 +1,2 @@
-INSERT INTO USER (userId, login, password) VALUES (1, 'user1', 'user1Password');
-INSERT INTO USER (userId, login, password) VALUES (2, 'user2', 'user2Password');
+INSERT INTO USER (userId, login, password, updatedDate) VALUES (1, 'user1', 'user1Password', TO_TIMESTAMP('14/10/2015 20:30:00', 'DD/MM/YYYY HH:MI:SS'));
+INSERT INTO USER (userId, login, password, updatedDate) VALUES (2, 'user2', 'user2Password', TO_TIMESTAMP('14/10/2015 21:45:00', 'DD/MM/YYYY HH:MI:SS'));

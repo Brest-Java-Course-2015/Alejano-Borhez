@@ -6,7 +6,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
  */
     @RunWith(SpringJUnit4ClassRunner.class)
     @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
+    @Transactional() //возвращает начальное состояние перед каждым тестом
 
     public class UserDaoImplTest {
 
@@ -43,21 +46,18 @@ import static org.junit.Assert.*;
         }
 
         @Test
-        public void testInsertUser() throws Exception {
+        public void testAddUser() throws Exception {
             Integer sizeBefore = userDao.getAllUsers().size();
-            Integer testId = 3;
-            User user = new User();
-            user.setUserId(testId);
-            user.setLogin("user3");
-            user.setPassword("user3Password");
+            User user = new User(null, "login", "password", new Date(), new Date());
 
-            userDao.insertUser(user);
+
+            Integer userId = userDao.addUser(user);
 
             Integer sizeAfter = userDao.getAllUsers().size();
 
             assertTrue( (sizeAfter - sizeBefore) == 1);
 
-            userDao.deleteUser(testId);
+            userDao.deleteUser(userId);
             sizeAfter = userDao.getAllUsers().size();
             assertTrue((sizeBefore - sizeAfter) == 0);
           }
@@ -66,36 +66,38 @@ import static org.junit.Assert.*;
         public void testChangeUserLogin () throws Exception {
             Integer testId = 4;
             User user = new User();
-            user.setUserId(testId);
             user.setLogin("user" + testId);
             user.setPassword("user" + testId + "Password");
 
-            userDao.insertUser(user);
+            Integer userId = userDao.addUser(user);
 
             String login = "newLogin";
-            userDao.changeUserLogin(testId, login);
+            userDao.changeUserLogin(userId, login);
 
-            assertTrue(userDao.getUserById(testId).getLogin().equals(login));
+            assertTrue(userDao.getUserById(userId).getLogin().equals(login));
 
-            userDao.deleteUser(testId);
         }
 
         @Test
         public void testChangeUserPassword () throws Exception {
             Integer testId = 4;
             User user = new User();
-            user.setUserId(testId);
             user.setLogin("user" + testId);
             user.setPassword("user" + testId + "Password");
 
-            userDao.insertUser(user);
+            Integer userId = userDao.addUser(user);
 
-            String password = "newLogin";
-            userDao.changeUserPassword(testId, password);
+            String password = "newPassword";
+            userDao.changeUserPassword(userId, password);
 
-            assertTrue(userDao.getUserById(testId).getPassword().equals(password));
+            assertTrue(userDao.getUserById(userId).getPassword().equals(password));
 
-            userDao.deleteUser(testId);
         }
 
-    }
+        @Test
+        public void testGetUserByLogin() throws Exception {
+            User user = userDao.getUserByLogin("user1");
+            assertNotNull(user);
+            assertEquals("user1", user.getLogin());
+        }
+}

@@ -11,12 +11,16 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
+import static com.epam.brest.course2015.domain.User.UserFields.*;
 /**
  * Created by alexander on 7.10.15.
  */
@@ -26,6 +30,7 @@ public class UserDaoImpl implements UserDao {
 
     @Value("${user.select}") private String userSelect;
     @Value("${user.selectById}") private String userSelectById;
+    @Value("${user.selectByLogin}") private String userSelectByLogin;
     @Value("${user.delete}") private String userDelete;
     @Value("${user.insert}") private String userInsert;
     @Value("${user.changeLogin}") private String userChangeLogin;
@@ -35,7 +40,7 @@ public class UserDaoImpl implements UserDao {
     @Value("${user.login}") private String user_login;
     @Value("${user.password}") private String user_password;
 
-    private RowMapper<User> userMapper = new BeanPropertyRowMapper<>(User.class);
+    //private RowMapper<User> userMapper = new BeanPropertyRowMapper<>(User.class);
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -46,7 +51,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         LOGGER.info("Starting method getAllUsers");
-        return namedParameterJdbcTemplate.query(userSelect, userMapper);
+        return namedParameterJdbcTemplate.query(userSelect, new UserRowMapper());
 
     }
 
@@ -73,7 +78,7 @@ public class UserDaoImpl implements UserDao {
 
         LOGGER.info("Starting method getUserById with id: {}", id);
         if (isThereAUser(id))
-        return namedParameterJdbcTemplate.queryForObject(userSelectById, namedParameters, userMapper);
+        return namedParameterJdbcTemplate.queryForObject(userSelectById, namedParameters, new UserRowMapper());
         else
         {
             return null;
@@ -81,19 +86,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User getUserByLogin(String login) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource(user_login, login);
 
-    public void insertUser(User user) {
-        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
-        LOGGER.info("Starting method insertUser");
-        if (!isThereAUser(user.getUserId()))
-        {
-            namedParameterJdbcTemplate.update(userInsert, namedParameters);
-            LOGGER.info("New user with id: {} successfully inserted!", user.getUserId());
-        }
-        else
-        {
-            LOGGER.info("Couldn't insert a user with id: {}", user.getUserId());
-        }
+        LOGGER.info("Starting method getUserByLogin with login:{}", login);
+        return namedParameterJdbcTemplate.queryForObject(userSelectByLogin, namedParameters, new UserRowMapper());
+    }
+
+    @Override
+    public Integer addUser(User user) {
+        // KeyHolder
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        user.setUpdatedDate(new Date());
+        LOGGER.info("Starting method addUser");
+        namedParameterJdbcTemplate.update(userInsert, getParametersMap(user), keyHolder);
+        LOGGER.info("New user with id: {} successfully inserted!", keyHolder.getKey().intValue());
+        return keyHolder.getKey().intValue();
+
     }
 
     @Override
@@ -116,11 +125,10 @@ public class UserDaoImpl implements UserDao {
         User user = new User();
         user.setUserId(id);
         user.setLogin(login);
-        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
 
         LOGGER.info("Starting method changeUserLogin with id: {} to new login: {}", id, login);
         if (isThereAUser(id)) {
-            namedParameterJdbcTemplate.update(userChangeLogin, namedParameters);
+            namedParameterJdbcTemplate.update(userChangeLogin, getParametersMap(user));
             LOGGER.info("Login of user with id: {} was successfully changed to {}", id, login);
         }
         else
@@ -135,11 +143,9 @@ public class UserDaoImpl implements UserDao {
         user.setUserId(id);
         user.setPassword(password);
 
-        SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(user);
-
         LOGGER.info("Starting method changeUserPassword with id: {} to new password: {}", id, password);
         if (isThereAUser(id)) {
-            namedParameterJdbcTemplate.update(userChangePassword, namedParameters);
+            namedParameterJdbcTemplate.update(userChangePassword, getParametersMap(user));
             LOGGER.info("Password of user with id: {} was successfully changed to {}", id, password);
         }
         else
@@ -150,5 +156,31 @@ public class UserDaoImpl implements UserDao {
 
     }
 
+    private MapSqlParameterSource getParametersMap (User user) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(USER_ID.getValue(), user.getUserId());
+        parameterSource.addValue(LOGIN.getValue(), user.getLogin());
+        parameterSource.addValue(PASSWORD.getValue(), user.getPassword());
+        parameterSource.addValue(CREATED_DATE.getValue(), user.getCreatedDate());
+        parameterSource.addValue(UPDATED_DATE.getValue(), user.getUpdatedDate());
+
+        return parameterSource;
+    }
+
+    private class UserRowMapper implements RowMapper<User> {
+
+        @Override
+        public User mapRow (ResultSet resultSet, int i) throws SQLException {
+            User user = new User(
+                    resultSet.getInt(USER_ID.getValue()),
+                    resultSet.getString(LOGIN.getValue()),
+                    resultSet.getString(PASSWORD.getValue()),
+                    resultSet.getTimestamp(CREATED_DATE.getValue()),
+                    resultSet.getTimestamp(UPDATED_DATE.getValue())
+                    );
+            return user;
+
+        }
+    }
 
 }
