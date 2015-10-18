@@ -1,14 +1,13 @@
-package com.epam.brest.course2015.dao;
-
+package com.epam.brest.course2015.service;
 
 import com.epam.brest.course2015.domain.User;
 
 import java.util.List;
 
 /**
- * Created by alexander on 7.10.15.
+ * Created by alexander on 18.10.15.
  */
-public interface UserDao {
+public interface UserService {
 
     public List<User> getAllUsers();
 
