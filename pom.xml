@@ -23,6 +23,7 @@
         <hsqldb.version>2.3.3</hsqldb.version>
         <log4j2.version>2.1</log4j2.version>
         <jackson.databind-version>2.4.3</jackson.databind-version>
+        <easymock.version>3.4</easymock.version>
     </properties>
 
 <dependencyManagement>
@@ -97,7 +98,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
@@ -117,6 +118,20 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.databind-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -220,7 +235,7 @@
                 </executions>
             </plugin>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.4</version>
@@ -252,7 +267,7 @@
                         </plugin>
                     </reportPlugins>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
         </plugins>
     </build>

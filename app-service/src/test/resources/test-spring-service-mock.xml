@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="userDao" class="org.easymock.EasyMock" factory-method="createMock">
+        <constructor-arg value="com.epam.brest.course2015.dao.UserDao"/>
+    </bean>
+
+    <bean id="userService" class="com.epam.brest.course2015.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+</beans>

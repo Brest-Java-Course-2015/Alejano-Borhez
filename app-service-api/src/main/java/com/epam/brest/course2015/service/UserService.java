@@ -1,6 +1,7 @@
 package com.epam.brest.course2015.service;
 
 import com.epam.brest.course2015.domain.User;
+import com.epam.brest.course2015.dto.UserDto;
 
 import java.util.List;
 
@@ -20,5 +21,9 @@ public interface UserService {
     public void updateUser(User user);
 
     public void deleteUser(Integer userId);
+
+    public void logUser(User user);
+
+    public UserDto getUserDto();
 
 }

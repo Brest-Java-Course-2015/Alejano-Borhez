@@ -32,6 +32,9 @@ public class UserDaoImpl implements UserDao {
     @Value("${user.select}")
     private String userSelect;
 
+    @Value("${user.countUsers}")
+    private String countUser;
+
     @Value("${user.selectById}")
     private String userSelectById;
 
@@ -101,6 +104,12 @@ public class UserDaoImpl implements UserDao {
         parameterSource.addValue(CREATED_DATE.getValue(), user.getCreatedDate());
         parameterSource.addValue(UPDATED_DATE.getValue(), user.getUpdatedDate());
         return parameterSource;
+    }
+
+    @Override
+    public Integer getCountUsers(String login) {
+        LOGGER.debug("getCountUsers(): login = {}", login);
+        return jdbcTemplate.queryForObject(countUser, new String[]{login}, Integer.class);
     }
 
     private class UserRowMapper implements RowMapper<User> {
