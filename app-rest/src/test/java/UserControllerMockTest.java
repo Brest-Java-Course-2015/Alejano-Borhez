@@ -125,4 +125,17 @@ public class UserControllerMockTest {
 
     }
 
+    @Test
+    public void addUserByLoginTest () throws Exception {
+        expect(userService.addUser(anyObject(User.class))).andReturn(5);
+        replay(userService);
+        mockMvc.perform(
+                post("/useradd/login123/password123")
+                .accept(MediaType.APPLICATION_JSON)
+        ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("5"));
+
+    }
+
 }

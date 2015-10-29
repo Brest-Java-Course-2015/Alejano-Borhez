@@ -24,11 +24,11 @@ public class UserRestController {
     public @ResponseBody List<User> getUsers() {
         return userService.getAllUsers();
     }
-
     @RequestMapping (value = "/user", method = RequestMethod.POST)
     public @ResponseBody Integer addUser (@RequestBody User user) {
         return userService.addUser(user);
     }
+
 
     @RequestMapping (value = "/user/{id}/{password}", method = RequestMethod.PUT)
     @ResponseStatus (value = HttpStatus.OK)
@@ -51,6 +51,12 @@ public class UserRestController {
     @RequestMapping (value = "/user/byid/{id}", method = RequestMethod.GET)
     public @ResponseBody User getUserById(@PathVariable(value = "id") Integer id) {
         return userService.getUserById(id);
+    }
+
+    @RequestMapping (value = "/useradd/{login}/{password}")
+    public @ResponseBody Integer addUserByLogin (@PathVariable(value = "login") String login,
+                                          @PathVariable(value = "password") String password) {
+        return userService.addUser(new User(login, password));
     }
 
     @RequestMapping (value = "/userdto", method = RequestMethod.GET)

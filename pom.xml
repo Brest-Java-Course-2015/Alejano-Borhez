@@ -15,6 +15,7 @@
         <module>app-service</module>
         <module>app-test</module>
         <module>app-rest</module>
+        <module>app-termclient</module>
     </modules>
 
     <properties>
@@ -86,6 +87,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
