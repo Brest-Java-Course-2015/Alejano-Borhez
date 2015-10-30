@@ -9,6 +9,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -86,7 +88,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserDto() {
-        return null;
+        LOGGER.debug("getUserDto(): ");
+        UserDto userDto = new UserDto();
+        userDto.setTotal(userDao.getTotalCountUsers());
+        if (userDto.getTotal() > 0) {
+            userDto.setUsers(userDao.getAllUsers());
+        } else {
+            userDto.setUsers(Collections.<User>emptyList());
+        }
+        return userDto;
     }
 
 

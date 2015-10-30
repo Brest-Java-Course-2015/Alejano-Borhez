@@ -24,4 +24,6 @@ public interface UserDao {
 
     public Integer getCountUsers(String login);
 
+    public Integer getTotalCountUsers();
+
 }

@@ -20,9 +20,60 @@
 <body>
 <h1>Simple User Management</h1>
 
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>UserId</th>
+            <th>Логин</th>
+            <th>Пароль</th>
+            <th>Дата создания</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody id="userList">
+        <tr>
+            <td>abc</td>
+            <td>def</td>
+            <td>ghi</td>
+            <td>123</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="userTotal">
+    <p>3</p>
+</div>
+<hr />
+
+<form id="userForm">
+    <div class="mainArea">
+
+        <label>Id:</label>
+        <input id="userId" name="id" type="text" disabled/>
+
+        <label>Login:</label>
+        <input type="text" id="login" name="login" required>
+
+        <label>Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button id="btnSave">Добавить</button>
+
+    </div>
+</form>
+
+
+
+
+
+
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/jquery.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<script src="js/main.js"></script>
 </body>
 </html>

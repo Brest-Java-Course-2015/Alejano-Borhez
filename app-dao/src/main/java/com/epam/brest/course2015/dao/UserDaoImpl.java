@@ -50,6 +50,9 @@ public class UserDaoImpl implements UserDao {
     @Value("${user.deleteUser}")
     private String deleteUser;
 
+    @Value("${user.totalCountUsers}")
+    private String totalUsersCountSql;
+
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -110,6 +113,12 @@ public class UserDaoImpl implements UserDao {
     public Integer getCountUsers(String login) {
         LOGGER.debug("getCountUsers(): login = {}", login);
         return jdbcTemplate.queryForObject(countUser, new String[]{login}, Integer.class);
+    }
+
+    @Override
+    public Integer getTotalCountUsers() {
+        LOGGER.debug("getTotalUsersCount()");
+        return jdbcTemplate.queryForObject(totalUsersCountSql, Integer.class);
     }
 
     private class UserRowMapper implements RowMapper<User> {

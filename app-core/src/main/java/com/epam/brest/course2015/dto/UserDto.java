@@ -20,7 +20,6 @@ public class UserDto {
     }
 
     public Integer getTotal() {
-        total = users.size();
         return total;
     }
 
