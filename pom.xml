@@ -16,6 +16,7 @@
         <module>app-test</module>
         <module>app-rest</module>
         <module>app-termclient</module>
+        <module>app-web</module>
     </modules>
 
     <properties>
