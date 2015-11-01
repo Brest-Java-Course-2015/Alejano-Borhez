@@ -6,19 +6,15 @@
 
     <servlet-mapping>
         <servlet-name>helloServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
         <url-pattern>/hello</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>restDispatcherServlet</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-params>
-            <param-name>contextCon
-            </param-name>
-        </init-params>
-
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
 
 
 
