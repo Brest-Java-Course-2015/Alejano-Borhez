@@ -48,8 +48,8 @@ public class UserRestController {
         return userService.getUserByLogin(login);
     }
 
-    @RequestMapping (value = "/user/byid/{id}", method = RequestMethod.GET)
-    public @ResponseBody User getUserById(@PathVariable(value = "id") Integer id) {
+    @RequestMapping (value = "/user/byid", method = RequestMethod.GET)
+    public @ResponseBody User getUserById(@RequestParam(value = "id") Integer id) {
         return userService.getUserById(id);
     }
 

@@ -45,7 +45,7 @@ public class UserServiceMockTest {
 
    @Test
     public void testGetUserByLogin() {
-        expect(mockUserDao.getUserByLogin(user.getLogin())).andReturn(user);
+        expect(mockUserDao.getUserByLogin(user.getLogin())).andReturn(user  );
         replay(mockUserDao);
         User result = userService.getUserByLogin(user.getLogin());
         Assert.assertTrue(result == user);

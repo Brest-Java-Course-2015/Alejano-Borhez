@@ -155,7 +155,7 @@ public class Main {
     private void getUserById() {
         Integer userId = getId("Enter user's Id: ");
         try {
-            ResponseEntity responseEntity = restTemplate.getForEntity(url + urlUserById + "/" + userId, Object.class);
+            ResponseEntity responseEntity = restTemplate.getForEntity(url + urlUserById + "?id=" + userId, Object.class);
             System.out.println("User with Id= " + userId + " is: " + responseEntity.getBody());
         } catch (CustomException ex) {
             System.out.println("ERROR: " + ex.getMessage());
